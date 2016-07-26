@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/ToImages">
+        <file>Images/New_file.png</file>
+        <file>Images/Open_file.png</file>
+        <file>Images/Save_file.png</file>
+        <file>Images/Exit.png</file>
+        <file>Images/Save_as_file.png</file>
+        <file>Images/Main_icon.png</file>
+        <file>Images/pensil.png</file>
+        <file>Images/paintBucket.png</file>
+        <file>Images/Text_icon.png</file>
+        <file>Images/Eraser.png</file>
+        <file>Images/Search.png</file>
+        <file>Images/pipette.png</file>
+        <file>Images/Redo.png</file>
+        <file>Images/Undo.png</file>
+        <file>Images/Info.png</file>
+        <file>Images/For_about.png</file>
+    </qresource>
+</RCC>
