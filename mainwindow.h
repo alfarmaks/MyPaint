@@ -7,6 +7,9 @@
 #include <QMouseEvent>
 #include <QGraphicsView>
 #include <QFileInfo>
+#include <QLabel>
+#include <QSpinBox>
+#include <QSlider>
 
 namespace Ui {
 class MainWindow;
@@ -25,14 +28,50 @@ private:
     bool save = true;
     QString filePath;
     Ui::MainWindow *ui;
+
+    //QToolButtons for panel tools
     QToolButton *actionPensil;
     QToolButton *actionPaintBucket;
     QToolButton *actionText;
     QToolButton *actionEraser;
     QToolButton *actionPipette;
     QToolButton *actionSearch;
+
+    //QToolButtons for panel Drawing
+    QToolButton *actionLine;
+    QToolButton *actionRect;
+    QToolButton *actionEllipse;
     QGraphicsView *graphics;
 
+    //panel Colors
+    QToolButton *color1;
+    QLabel *color1Text;
+    QToolButton *color2;
+    QLabel *color2Text;
+    bool color1Checked = true;
+    bool color2Checked = false;
+    QToolButton *actionStrokeFill;
+
+    QToolButton *colorBlack;
+    QToolButton *colorWhite;
+    QToolButton *colorDarkGrey;
+    QToolButton *colorGrey;
+    QToolButton *colorDarkRed;
+    QToolButton *colorRed;
+    QToolButton *colorDarkMagenta;
+    QToolButton *colorMagenta;
+    QToolButton *colorDarkYellow;
+    QToolButton *colorYellow;
+    QToolButton *colorDarkGreen;
+    QToolButton *colorGreen;
+    QToolButton *colorDarkBlue;
+    QToolButton *colorBlue;
+    QToolButton *colorDarkCyan;
+    QToolButton *colorCyan;
+
+    //Size
+    QSpinBox *spinBoxSize;
+    QSlider *sliderSize;
 
     void mouseMoveEvent(QMouseEvent *ev);
     void closeEvent (QCloseEvent *event);
@@ -46,6 +85,9 @@ private slots:
     void saveImage();
     void saveAsImage();
     void newLayout();
+    void clickColor1();
+    void clickColor2();
+    void changeColor();
 
 };
 

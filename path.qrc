@@ -16,5 +16,9 @@
         <file>Images/Undo.png</file>
         <file>Images/Info.png</file>
         <file>Images/For_about.png</file>
+        <file>Images/line.png</file>
+        <file>Images/Rect.png</file>
+        <file>Images/Ellipse.png</file>
+        <file>Images/Stroke_Fill.png</file>
     </qresource>
 </RCC>
