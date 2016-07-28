@@ -20,5 +20,6 @@
         <file>Images/Rect.png</file>
         <file>Images/Ellipse.png</file>
         <file>Images/Stroke_Fill.png</file>
+        <file>Images/select.png</file>
     </qresource>
 </RCC>

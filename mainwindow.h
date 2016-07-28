@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "scene.h"
 #include <QMainWindow>
 #include <QAction>
 #include <QToolButton>
@@ -10,6 +11,7 @@
 #include <QLabel>
 #include <QSpinBox>
 #include <QSlider>
+#include <QSignalMapper>
 
 namespace Ui {
 class MainWindow;
@@ -23,11 +25,13 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-
 private:
     bool save = true;
     QString filePath;
     Ui::MainWindow *ui;
+
+    QGraphicsView *graphics;
+    Scene* scene;
 
     //QToolButtons for panel tools
     QToolButton *actionPensil;
@@ -35,13 +39,12 @@ private:
     QToolButton *actionText;
     QToolButton *actionEraser;
     QToolButton *actionPipette;
-    QToolButton *actionSearch;
 
     //QToolButtons for panel Drawing
     QToolButton *actionLine;
     QToolButton *actionRect;
     QToolButton *actionEllipse;
-    QGraphicsView *graphics;
+    QToolButton *actionSelect;
 
     //panel Colors
     QToolButton *color1;
@@ -73,6 +76,11 @@ private:
     QSpinBox *spinBoxSize;
     QSlider *sliderSize;
 
+    QSignalMapper *colorMapper;
+    QSignalMapper *drawingMapper;
+
+    void createActions();
+    void createConnections();
     void mouseMoveEvent(QMouseEvent *ev);
     void closeEvent (QCloseEvent *event);
     void saveFile(QFileInfo checkSuffix);
@@ -87,7 +95,9 @@ private slots:
     void newLayout();
     void clickColor1();
     void clickColor2();
-    void changeColor();
+    void clicked(const QString &color);
+
+    void actionDrawingClicked(int mode);
 
 };
 

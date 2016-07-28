@@ -11,6 +11,7 @@
 #include <QTransform>
 #include <QCursor>
 #include <QMessageBox>
+#include <QtGui>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -20,32 +21,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mainToolBar->setMovable(false);
     //this->setMouseTracking(true);
 
-    graphics = new QGraphicsView(this);
+    scene = new Scene(this);
+    graphics = new QGraphicsView(scene);
     graphics->setAlignment(Qt::AlignCenter);
-    graphics->setMouseTracking(true);
     this->setCentralWidget(graphics);
 
-    //Set actions icons and names Tools
-    actionPensil = new QToolButton(this);
-    actionPensil->setIcon(QIcon(":/ToImages/Images/pensil.png"));
-    actionPensil->setIconSize(QSize(24, 24));
-    actionPaintBucket = new QToolButton(this);
-    actionPaintBucket->setIcon(QIcon(":/ToImages/Images/paintBucket.png"));
-    actionPaintBucket->setIconSize(QSize(24, 24));
-    actionText = new QToolButton(this);
-    actionText->setIcon(QIcon(":/ToImages/Images/Text_icon.png"));
-    actionText->setIconSize(QSize(24, 24));
-    actionEraser = new QToolButton(this);
-    actionEraser->setIcon(QIcon(":/ToImages/Images/Eraser.png"));
-    actionEraser->setIconSize(QSize(24, 24));
-    actionPipette = new QToolButton(this);
-    actionPipette->setIcon(QIcon(":/ToImages/Images/pipette.png"));
-    actionPipette->setIconSize(QSize(24, 24));
-    actionSearch = new QToolButton(this);
-    actionSearch->setIcon(QIcon(":/ToImages/Images/Search.png"));
-    actionSearch->setIconSize(QSize(24, 24));
+    createActions();//create all action
 
-    //create widget and layout for setting tools
+    //------Tools----------
+
     QWidget *widgetTools = new QWidget();
     QHBoxLayout *layoutH = new QHBoxLayout();
     QHBoxLayout *layoutH2 = new QHBoxLayout();
@@ -57,7 +41,6 @@ MainWindow::MainWindow(QWidget *parent) :
     layoutH->addWidget(actionText);
     layoutH2->addWidget(actionEraser);
     layoutH2->addWidget(actionPipette);
-    layoutH2->addWidget(actionSearch);
 
     layoutTools->addLayout(layoutH);
     layoutTools->addLayout(layoutH2);
@@ -65,16 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
     layoutTools->setAlignment(tools, Qt::AlignCenter | Qt::AlignBottom);
     widgetTools->setLayout(layoutTools);
 
-    //Set actions and names Drawing
-    actionEllipse= new QToolButton();
-    actionEllipse->setIcon(QIcon(":/ToImages/Images/Ellipse.png"));
-    actionEllipse->setIconSize(QSize(24, 24));
-    actionLine = new QToolButton();
-    actionLine->setIcon(QIcon(":/ToImages/Images/line.png"));
-    actionLine->setIconSize(QSize(24, 24));
-    actionRect = new QToolButton();
-    actionRect->setIcon(QIcon(":/ToImages/Images/Rect.png"));
-    actionRect->setIconSize(QSize(24, 24));
+    //------Drawing--------------
 
     QWidget *widgetDrawing = new QWidget();
     QHBoxLayout *layoutHD = new QHBoxLayout();
@@ -87,25 +61,15 @@ MainWindow::MainWindow(QWidget *parent) :
     layoutHD->addWidget(actionEllipse);
 
     layoutDrawing->addLayout(layoutHD);
+    layoutDrawing->addWidget(actionSelect);
     layoutDrawing->addWidget(Shapes);
     layoutDrawing->setAlignment(Shapes, Qt::AlignBottom | Qt::AlignCenter);
     widgetDrawing->setLayout(layoutDrawing);
 
-    //Size
+
+    //-----Size---------------
     QLabel *size = new QLabel("Size: ");
     size->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-    spinBoxSize = new QSpinBox();
-    spinBoxSize->setRange(1, 20);
-    spinBoxSize->setValue(1);
-    spinBoxSize->setSingleStep(1);
-
-    sliderSize = new QSlider();
-    sliderSize->setRange(1, 20);
-    sliderSize->setValue(1);
-    sliderSize->setSingleStep(1);
-    sliderSize->setOrientation(Qt::Horizontal);
-    //sliderSize->setMaximumWidth(150);
-
     QWidget *widgetSize = new QWidget();
     QHBoxLayout *sizeHB = new QHBoxLayout();
     QVBoxLayout *sizeVB = new QVBoxLayout();
@@ -118,93 +82,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     widgetSize->setLayout(sizeVB);
 
-    connect(spinBoxSize, SIGNAL(valueChanged(int)), sliderSize, SLOT(setValue(int)));
-    connect(sliderSize, SIGNAL(valueChanged(int)), spinBoxSize, SLOT(setValue(int)));
-
-    //Colors
-    actionStrokeFill = new QToolButton();
-    actionStrokeFill->setIconSize(QSize(48, 48));
-    actionStrokeFill->setIcon(QIcon(":/ToImages/Images/Stroke_Fill.png"));
-    actionStrokeFill->setCheckable(true);
-
-    color1 = new QToolButton();
-    color2 = new QToolButton();
-    color1->setStyleSheet("background-color:black");
-    color1->setFixedSize(24, 24);
-    color2->setStyleSheet("background-color:white");
-    color2->setFixedSize(24, 24);
-    color1->setCheckable(true);
-    color2->setCheckable(true);
-    if(color1Checked)
-    {
-        color1->setChecked(color1Checked);
-    }
-    else
-    {
-        color2->setChecked(color2Checked);
-    }
-    color1Text = new QLabel("Color 1");
-    color2Text = new QLabel("Color 2");
-
-    //connect change color1 and color2
-    connect(color1, SIGNAL(clicked(bool)), this, SLOT(clickColor1()));
-    connect(color2, SIGNAL(clicked(bool)), this, SLOT(clickColor2()));
-
-    //color panel
-    colorBlack = new QToolButton();
-    colorWhite = new QToolButton();
-    colorDarkGrey = new QToolButton();
-    colorGrey = new QToolButton();
-    colorDarkRed = new QToolButton();
-    colorRed = new QToolButton();
-    colorDarkMagenta = new QToolButton();
-    colorMagenta = new QToolButton();
-    colorDarkYellow = new QToolButton();
-    colorYellow = new QToolButton();
-    colorDarkGreen = new QToolButton();
-    colorGreen = new QToolButton();
-    colorDarkBlue = new QToolButton();
-    colorBlue = new QToolButton();
-    colorDarkCyan = new QToolButton();
-    colorCyan = new QToolButton();
-
-    colorBlack->setStyleSheet("background-color:black");
-    colorBlack->setFixedSize(24, 24);
-    colorWhite->setStyleSheet("background-color:white");
-    colorWhite->setFixedSize(24, 24);
-    colorDarkGrey->setStyleSheet("background-color:darkGrey");
-    colorDarkGrey->setFixedSize(24, 24);
-    colorGrey->setStyleSheet("background-color:grey");
-    colorGrey->setFixedSize(24, 24);
-    colorDarkRed->setStyleSheet("background-color:darkRed");
-    colorDarkRed->setFixedSize(24, 24);
-    colorRed->setStyleSheet("background-color:red");
-    colorRed->setFixedSize(24, 24);
-    colorDarkMagenta->setStyleSheet("background-color:darkMagenta");
-    colorDarkMagenta->setFixedSize(24, 24);
-    colorMagenta->setStyleSheet("background-color:magenta");
-    colorMagenta->setFixedSize(24, 24);
-    colorDarkYellow->setStyleSheet("background-color:darkYellow");
-    colorDarkYellow->setFixedSize(24, 24);
-    colorYellow->setStyleSheet("background-color:yellow");
-    colorYellow->setFixedSize(24, 24);
-    colorDarkGreen->setStyleSheet("background-color:darkGreen");
-    colorDarkGreen->setFixedSize(24, 24);
-    colorGreen->setStyleSheet("background-color:green");
-    colorGreen->setFixedSize(24, 24);
-    colorDarkBlue->setStyleSheet("background-color:darkBlue");
-    colorDarkBlue->setFixedSize(24, 24);
-    colorBlue->setStyleSheet("background-color:blue");
-    colorBlue->setFixedSize(24, 24);
-    colorDarkCyan->setStyleSheet("background-color:darkCyan");
-    colorDarkCyan->setFixedSize(24, 24);
-    colorCyan->setStyleSheet("background-color:cyan");
-    colorCyan->setFixedSize(24, 24);
+    //------Colors----------
 
     QHBoxLayout *colorLayoutDark = new QHBoxLayout();
     QHBoxLayout *colorLayoutLight = new QHBoxLayout();
     QVBoxLayout *colors = new QVBoxLayout();
 
+    //add dark color buttons
     colorLayoutDark->addWidget(colorBlack);
     colorLayoutDark->addWidget(colorDarkGrey);
     colorLayoutDark->addWidget(colorDarkRed);
@@ -214,6 +98,7 @@ MainWindow::MainWindow(QWidget *parent) :
     colorLayoutDark->addWidget(colorDarkBlue);
     colorLayoutDark->addWidget(colorDarkCyan);
 
+    //add light color buttons
     colorLayoutLight->addWidget(colorWhite);
     colorLayoutLight->addWidget(colorGrey);
     colorLayoutLight->addWidget(colorRed);
@@ -223,6 +108,7 @@ MainWindow::MainWindow(QWidget *parent) :
     colorLayoutLight->addWidget(colorBlue);
     colorLayoutLight->addWidget(colorCyan);
 
+    //setLayout with buttons
     colors->addLayout(colorLayoutDark);
     colors->addLayout(colorLayoutLight);
 
@@ -265,13 +151,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionSave_as->setShortcut(QString("Ctrl+Shift+S"));
     ui->actionAbout->setShortcut(QString("F1"));
 
-    //set signals and slots
-    connect(ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(close()));
-    connect(ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(openFile()));
-    connect(ui->actionAbout, SIGNAL(triggered(bool)), this, SLOT(aboutInfo()));
-    connect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(saveImage()));
-    connect(ui->actionSave_as, SIGNAL(triggered(bool)), this, SLOT(saveAsImage()));
-    connect(ui->actionNew, SIGNAL(triggered(bool)), this, SLOT(newLayout()));
+    createConnections();
+
 }
 
 MainWindow::~MainWindow()
@@ -327,13 +208,12 @@ void MainWindow::openFile()
             else
             {
                 save = false;
-                QGraphicsScene *scene = new QGraphicsScene();
+                scene = new Scene(this);
                 graphics = new QGraphicsView(scene);
                 graphics->setAlignment(Qt::AlignCenter);
                 this->setCentralWidget(graphics);
                 this->resize(image.width()+25, image.height()+ui->mainToolBar->height()+ui->menuBar->height()+ui->statusBar->height()+25);
                 scene->addPixmap(QPixmap::fromImage(image));
-                //scene->addItem(item);
             }
         }
         else
@@ -474,8 +354,15 @@ void MainWindow::clickColor1()
     {
         color1Checked = true;
         color1->setChecked(color1Checked);
+        scene->setBorderColor(color1->styleSheet().replace("background-color:", ""));
+
         color2Checked = false;
         color2->setChecked(color2Checked);
+        scene->setFillColor(color2->styleSheet().replace("background-color:", ""));
+    }
+    else
+    {
+        color1->setChecked(color1Checked);
     }
 }
 
@@ -485,12 +372,291 @@ void MainWindow::clickColor2()
     {
         color1Checked = false;
         color1->setChecked(color1Checked);
+        scene->setFillColor(color1->styleSheet().replace("background-color:", ""));
+
         color2Checked = true;
+        color2->setChecked(color2Checked);
+        scene->setBorderColor(color2->styleSheet().replace("background-color:", ""));
+    }
+    else
+    {
         color2->setChecked(color2Checked);
     }
 }
 
-void MainWindow::changeColor()
+void MainWindow::clicked(const QString &color)
 {
-
+    if(color1Checked)
+    {
+        color1->setStyleSheet(QString("background-color:%1").arg(color));
+    }
+    else if(color2Checked)
+    {
+        color2->setStyleSheet(QString("background-color:%1").arg(color));
+    }
 }
+
+void MainWindow::actionDrawingClicked(int mode)
+{
+    Scene::Mode getMode = Scene::Mode(mode);
+    scene->setMode(getMode);
+    if(Scene::DrawLine == getMode)
+    {
+        actionLine->setChecked(true);
+        actionEllipse->setChecked(false);
+        actionRect->setChecked(false);
+        actionSelect->setChecked(false);
+    }
+    else if(Scene::DrawEllipse == getMode)
+    {
+        actionLine->setChecked(false);
+        actionEllipse->setChecked(true);
+        actionRect->setChecked(false);
+        actionSelect->setChecked(false);
+    }
+    else if(Scene::DrawRect == getMode)
+    {
+        actionLine->setChecked(false);
+        actionEllipse->setChecked(false);
+        actionRect->setChecked(true);
+        actionSelect->setChecked(false);
+    }
+    else if(Scene::SelectObject == getMode)
+    {
+        actionLine->setChecked(false);
+        actionEllipse->setChecked(false);
+        actionRect->setChecked(false);
+        actionSelect->setChecked(true);
+    }
+}
+
+void MainWindow::createActions()
+{
+    //Set actions icons and names Tools
+    actionPensil = new QToolButton(this);
+    actionPensil->setIcon(QIcon(":/ToImages/Images/pensil.png"));
+    actionPensil->setIconSize(QSize(24, 24));
+    actionPensil->setCheckable(true);
+
+    actionPaintBucket = new QToolButton(this);
+    actionPaintBucket->setIcon(QIcon(":/ToImages/Images/paintBucket.png"));
+    actionPaintBucket->setIconSize(QSize(24, 24));
+    actionPaintBucket->setCheckable(true);
+
+    actionText = new QToolButton(this);
+    actionText->setIcon(QIcon(":/ToImages/Images/Text_icon.png"));
+    actionText->setIconSize(QSize(24, 24));
+    actionText->setCheckable(true);
+
+    actionEraser = new QToolButton(this);
+    actionEraser->setIcon(QIcon(":/ToImages/Images/Eraser.png"));
+    actionEraser->setIconSize(QSize(24, 24));
+    actionEraser->setCheckable(true);
+
+    actionPipette = new QToolButton(this);
+    actionPipette->setIcon(QIcon(":/ToImages/Images/pipette.png"));
+    actionPipette->setIconSize(QSize(24, 24));
+    actionPipette->setCheckable(true);
+
+    //Set actions and names Drawing
+    actionEllipse= new QToolButton();
+    actionEllipse->setIcon(QIcon(":/ToImages/Images/Ellipse.png"));
+    actionEllipse->setIconSize(QSize(24, 24));
+    actionEllipse->setCheckable(true);
+
+    actionLine = new QToolButton();
+    actionLine->setIcon(QIcon(":/ToImages/Images/line.png"));
+    actionLine->setIconSize(QSize(24, 24));
+    actionLine->setCheckable(true);
+
+    actionRect = new QToolButton();
+    actionRect->setIcon(QIcon(":/ToImages/Images/Rect.png"));
+    actionRect->setIconSize(QSize(24, 24));
+    actionRect->setCheckable(true);
+
+    actionSelect = new QToolButton();
+    actionSelect->setIcon(QIcon(":/ToImages/Images/select.png"));
+    actionSelect->setIconSize(QSize(24, 24));
+    actionSelect->setCheckable(true);
+
+    //Size
+    spinBoxSize = new QSpinBox();
+    spinBoxSize->setRange(1, 20);
+    spinBoxSize->setValue(1);
+    spinBoxSize->setSingleStep(1);
+
+    sliderSize = new QSlider();
+    sliderSize->setRange(1, 20);
+    sliderSize->setValue(1);
+    sliderSize->setSingleStep(1);
+    sliderSize->setOrientation(Qt::Horizontal);
+
+
+    //Colors
+    actionStrokeFill = new QToolButton();
+    actionStrokeFill->setIconSize(QSize(48, 48));
+    actionStrokeFill->setIcon(QIcon(":/ToImages/Images/Stroke_Fill.png"));
+    actionStrokeFill->setCheckable(true);
+
+    color1 = new QToolButton();
+    color2 = new QToolButton();
+    color1->setStyleSheet("background-color:black");
+    color1->setFixedSize(24, 24);
+    color2->setStyleSheet("background-color:white");
+    color2->setFixedSize(24, 24);
+    color1->setCheckable(true);
+    color2->setCheckable(true);
+    if(color1Checked)
+    {
+        color1->setChecked(color1Checked);
+    }
+    else
+    {
+        color2->setChecked(color2Checked);
+    }
+    color1Text = new QLabel("Color 1");
+    color2Text = new QLabel("Color 2");
+
+    //color panel
+    colorBlack = new QToolButton();
+    colorBlack->setStyleSheet("background-color:black");
+    colorBlack->setFixedSize(24, 24);
+
+    colorWhite = new QToolButton();
+    colorWhite->setStyleSheet("background-color:white");
+    colorWhite->setFixedSize(24, 24);
+
+    colorDarkGrey = new QToolButton();
+    colorDarkGrey->setStyleSheet("background-color:darkGrey");
+    colorDarkGrey->setFixedSize(24, 24);
+
+    colorGrey = new QToolButton();
+    colorGrey->setStyleSheet("background-color:grey");
+    colorGrey->setFixedSize(24, 24);
+
+    colorDarkRed = new QToolButton();
+    colorDarkRed->setStyleSheet("background-color:darkRed");
+    colorDarkRed->setFixedSize(24, 24);
+
+    colorRed = new QToolButton();
+    colorRed->setStyleSheet("background-color:red");
+    colorRed->setFixedSize(24, 24);
+
+    colorDarkMagenta = new QToolButton();
+    colorDarkMagenta->setStyleSheet("background-color:darkMagenta");
+    colorDarkMagenta->setFixedSize(24, 24);
+
+    colorMagenta = new QToolButton();
+    colorMagenta->setStyleSheet("background-color:magenta");
+    colorMagenta->setFixedSize(24, 24);
+
+    colorDarkYellow = new QToolButton();
+    colorDarkYellow->setStyleSheet("background-color:darkYellow");
+    colorDarkYellow->setFixedSize(24, 24);
+
+    colorYellow = new QToolButton();
+    colorYellow->setStyleSheet("background-color:yellow");
+    colorYellow->setFixedSize(24, 24);
+
+    colorDarkGreen = new QToolButton();
+    colorDarkGreen->setStyleSheet("background-color:darkGreen");
+    colorDarkGreen->setFixedSize(24, 24);
+
+    colorGreen = new QToolButton();
+    colorGreen->setStyleSheet("background-color:green");
+    colorGreen->setFixedSize(24, 24);
+
+    colorDarkBlue = new QToolButton();
+    colorDarkBlue->setStyleSheet("background-color:darkBlue");
+    colorDarkBlue->setFixedSize(24, 24);
+
+    colorBlue = new QToolButton();
+    colorBlue->setStyleSheet("background-color:blue");
+    colorBlue->setFixedSize(24, 24);
+
+    colorDarkCyan = new QToolButton();
+    colorDarkCyan->setStyleSheet("background-color:darkCyan");
+    colorDarkCyan->setFixedSize(24, 24);
+
+    colorCyan = new QToolButton();
+    colorCyan->setStyleSheet("background-color:cyan");
+    colorCyan->setFixedSize(24, 24);
+
+    //crate colorMapper for choosing colors
+    colorMapper = new QSignalMapper(this);
+
+    //create drawingMapper for choosing drawItem and mode
+    drawingMapper = new QSignalMapper(this);
+}
+
+void MainWindow::createConnections()
+{
+    //connect spinBox and slider
+    connect(spinBoxSize, SIGNAL(valueChanged(int)), sliderSize, SLOT(setValue(int)));
+    connect(sliderSize, SIGNAL(valueChanged(int)), spinBoxSize, SLOT(setValue(int)));
+
+    //connect change color1 and color2
+    connect(color1, SIGNAL(clicked(bool)), this, SLOT(clickColor1()));
+    connect(color2, SIGNAL(clicked(bool)), this, SLOT(clickColor2()));
+
+    //connect button with colorMapper
+    connect(colorBlack, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorWhite, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorDarkGrey, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorGrey, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorDarkRed, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorRed, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorDarkMagenta, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorMagenta, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorDarkYellow, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorYellow, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorDarkGreen, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorGreen, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorDarkBlue, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorBlue, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorDarkCyan, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorCyan, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+
+    //connect color of button and their color in mapper
+    colorMapper->setMapping(colorBlack, QString("black"));
+    colorMapper->setMapping(colorWhite, QString("white"));
+    colorMapper->setMapping(colorDarkGrey, QString("darkGrey"));
+    colorMapper->setMapping(colorGrey, QString("grey"));
+    colorMapper->setMapping(colorDarkRed, QString("darkRed"));
+    colorMapper->setMapping(colorRed, QString("red"));
+    colorMapper->setMapping(colorDarkMagenta, QString("darkMagenta"));
+    colorMapper->setMapping(colorMagenta, QString("magenta"));
+    colorMapper->setMapping(colorDarkYellow, QString("darkYellow"));
+    colorMapper->setMapping(colorYellow, QString("yellow"));
+    colorMapper->setMapping(colorDarkGreen, QString("darkGreen"));
+    colorMapper->setMapping(colorGreen, QString("green"));
+    colorMapper->setMapping(colorDarkBlue, QString("darkBlue"));
+    colorMapper->setMapping(colorBlue, QString("blue"));
+    colorMapper->setMapping(colorDarkCyan, QString("darkCyan"));
+    colorMapper->setMapping(colorCyan, QString("cyan"));
+
+    //connect mapper with slot
+    connect(colorMapper, SIGNAL(mapped(const QString &)), this, SLOT(clicked(const QString &)));
+
+    //set signals and slots for menuBar
+    connect(ui->actionExit, SIGNAL(triggered(bool)), this, SLOT(close()));
+    connect(ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(openFile()));
+    connect(ui->actionAbout, SIGNAL(triggered(bool)), this, SLOT(aboutInfo()));
+    connect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(saveImage()));
+    connect(ui->actionSave_as, SIGNAL(triggered(bool)), this, SLOT(saveAsImage()));
+    connect(ui->actionNew, SIGNAL(triggered(bool)), this, SLOT(newLayout()));
+
+    //connect drawing buttons and drawingMapper
+    connect(actionEllipse, SIGNAL(clicked(bool)), drawingMapper, SLOT(map()));
+    connect(actionLine, SIGNAL(clicked(bool)), drawingMapper, SLOT(map()));
+    connect(actionSelect, SIGNAL(clicked(bool)), drawingMapper, SLOT(map()));
+    connect(actionRect, SIGNAL(clicked(bool)), drawingMapper, SLOT(map()));
+
+    drawingMapper->setMapping(actionSelect, int(Scene::SelectObject));
+    drawingMapper->setMapping(actionLine, int(Scene::DrawLine));
+    drawingMapper->setMapping(actionEllipse, int(Scene::DrawEllipse));
+    drawingMapper->setMapping(actionRect, int(Scene::DrawRect));
+
+    connect(drawingMapper, SIGNAL(mapped(int)), this, SLOT(actionDrawingClicked(int)));
+}
+
