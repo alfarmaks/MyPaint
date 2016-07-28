@@ -30,6 +30,7 @@ private:
     Mode sceneMode;
     QPointF origPoint;
     QGraphicsLineItem* itemToDraw;
+    QGraphicsRectItem* itemRect;
 
     //Color and line
     QString borderColor;

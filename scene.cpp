@@ -4,6 +4,7 @@ Scene::Scene(QObject* parent): QGraphicsScene(parent)
 {
     sceneMode = NoMode;
     itemToDraw = 0;
+    itemRect = 0;
 }
 
 void Scene::setMode(Mode mode){
@@ -33,30 +34,48 @@ void Scene::makeItemsControllable(bool areControllable){
 }
 
 void Scene::mousePressEvent(QGraphicsSceneMouseEvent *event){
-    if(sceneMode == DrawLine)
+    if(sceneMode == DrawLine || sceneMode == DrawRect || sceneMode == DrawEllipse)
         origPoint = event->scenePos();
     QGraphicsScene::mousePressEvent(event);
 }
 
 void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
-    if(sceneMode == DrawLine){
-        if(!itemToDraw){
-            itemToDraw = new QGraphicsLineItem;
+    if(sceneMode == DrawLine)
+    {
+        if(!itemToDraw)
+        {
+            itemToDraw = new QGraphicsLineItem();
             this->addItem(itemToDraw);
             itemToDraw->setPen(QPen(color(0), sizeOfBorderLine, Qt::SolidLine));
             itemToDraw->setPos(origPoint);
         }
-        itemToDraw->setLine(0,0,
+        itemToDraw->setLine(0, 0,
                             event->scenePos().x() - origPoint.x(),
                             event->scenePos().y() - origPoint.y());
         save = false;
     }
+    //---
+    else if(sceneMode == DrawRect)
+    {
+        if(!itemRect)
+        {
+            itemRect = new QGraphicsRectItem();
+            this->addItem(itemRect);
+            itemRect->setPen(QPen(color(0), sizeOfBorderLine, Qt::SolidLine));
+            itemRect->setPos(origPoint);
+        }
+        itemRect->setRect(0,0,
+                          event->scenePos().x() - origPoint.x(),
+                          event->scenePos().y() - origPoint.y());
+    }
+    //---
     else
         QGraphicsScene::mouseMoveEvent(event);
 }
 
 void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     itemToDraw = 0;
+    itemRect = 0;
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
