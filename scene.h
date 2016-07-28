@@ -32,6 +32,7 @@ private:
     QPointF origPoint;
     QGraphicsLineItem* itemToDraw;
     QGraphicsRectItem* itemRect;
+    QGraphicsEllipseItem* itemEllipse;
 
     //Color and line
     QString borderColor;

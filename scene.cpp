@@ -5,6 +5,7 @@ Scene::Scene(QObject* parent): QGraphicsScene(parent)
     sceneMode = NoMode;
     itemToDraw = 0;
     itemRect = 0;
+    itemEllipse = 0;
 }
 
 void Scene::setMode(Mode mode){
@@ -54,7 +55,6 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
                             event->scenePos().y() - origPoint.y());
         save = false;
     }
-    //---
     else if(sceneMode == DrawRect)
     {
         if(!itemRect)
@@ -73,7 +73,24 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
                           event->scenePos().y() - origPoint.y());
         save = false;
     }
-    //---
+    else if(sceneMode == DrawEllipse)
+    {
+        if(!itemEllipse)
+        {
+            itemEllipse = new QGraphicsEllipseItem();
+            this->addItem(itemEllipse);
+            itemEllipse->setPen(QPen(color(0), sizeOfBorderLine, Qt::SolidLine));
+            itemEllipse->setPos(origPoint);
+        }
+        if(_fill)
+        {
+            itemEllipse->setBrush(color(1));
+        }
+        itemEllipse->setRect(0,0,
+                          event->scenePos().x() - origPoint.x(),
+                          event->scenePos().y() - origPoint.y());
+        save = false;
+    }
     else
         QGraphicsScene::mouseMoveEvent(event);
 }
@@ -81,6 +98,7 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     itemToDraw = 0;
     itemRect = 0;
+    itemEllipse = 0;
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
@@ -143,6 +161,10 @@ Qt::GlobalColor Scene::color(int which) const
     else if(color == "darkGray")
     {
         return Qt::darkGray;
+    }
+    else if (color == "gray")
+    {
+        return Qt::gray;
     }
     else if(color == "darkRed")
     {
