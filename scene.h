@@ -16,19 +16,29 @@ public:
     void setMode(Mode mode);
     void setBorderColor(QString color);
     void setFillColor(QString color);
-    bool saved() const;
+    void setSizeOfBorderLine(int size);
+    bool isSaved() const;
+    void saved();
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
+
 private:
     Mode sceneMode;
     QPointF origPoint;
     QGraphicsLineItem* itemToDraw;
+
+    //Color and line
     QString borderColor;
     QString fillColor;
+    qreal sizeOfBorderLine = 1;
+
     bool save = true;
+
+    Qt::GlobalColor color(int which = 0) const;
     void makeItemsControllable(bool areControllable);
 };
 

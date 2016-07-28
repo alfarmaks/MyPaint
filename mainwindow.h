@@ -58,8 +58,8 @@ private:
 
     QToolButton *colorBlack;
     QToolButton *colorWhite;
-    QToolButton *colorDarkGrey;
-    QToolButton *colorGrey;
+    QToolButton *colorDarkGray;
+    QToolButton *colorGray;
     QToolButton *colorDarkRed;
     QToolButton *colorRed;
     QToolButton *colorDarkMagenta;
@@ -99,7 +99,8 @@ private slots:
     void clickColor2();
     void clicked(const QString &color);
     void actionDrawingClicked(int mode);
-
+    void setValueSpinBox(int value);
+    void setValueSlider(int value);
 };
 
 #endif // MAINWINDOW_H

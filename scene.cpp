@@ -43,12 +43,13 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
         if(!itemToDraw){
             itemToDraw = new QGraphicsLineItem;
             this->addItem(itemToDraw);
-            itemToDraw->setPen(QPen(Qt::black, 3, Qt::SolidLine));
+            itemToDraw->setPen(QPen(color(0), sizeOfBorderLine, Qt::SolidLine));
             itemToDraw->setPos(origPoint);
         }
         itemToDraw->setLine(0,0,
                             event->scenePos().x() - origPoint.x(),
                             event->scenePos().y() - origPoint.y());
+        save = false;
     }
     else
         QGraphicsScene::mouseMoveEvent(event);
@@ -79,7 +80,93 @@ void Scene::setFillColor(QString color)
     fillColor = color;
 }
 
-bool Scene::saved() const
+bool Scene::isSaved() const
 {
     return save;
 }
+
+void Scene::saved()
+{
+    save = true;
+}
+
+void Scene::setSizeOfBorderLine(int size)
+{
+    sizeOfBorderLine = static_cast<qreal>(size);
+}
+
+Qt::GlobalColor Scene::color(int which) const
+{
+    QString color;
+    if(which == 0)
+    {
+        color = borderColor;
+    }
+    else
+    {
+        color = fillColor;
+    }
+
+    //return color
+    if(color == "black")
+    {
+        return Qt::black;
+    }
+    else if(color == "white")
+    {
+        return Qt::white;
+    }
+    else if(color == "darkGray")
+    {
+        return Qt::darkGray;
+    }
+    else if(color == "darkRed")
+    {
+        return Qt::darkRed;
+    }
+    else if(color == "red")
+    {
+        return Qt::red;
+    }
+    else if(color == "darkMagenta")
+    {
+        return Qt::darkMagenta;
+    }
+    else if(color == "magenta")
+    {
+        return Qt::magenta;
+    }
+    else if(color == "darkYellow")
+    {
+        return Qt::darkYellow;
+    }
+    else if(color == "yellow")
+    {
+        return Qt::yellow;
+    }
+    else if(color == "darkGreen")
+    {
+        return Qt::darkGreen;
+    }
+    else if(color == "green")
+    {
+        return Qt::green;
+    }
+    else if(color == "darkBlue")
+    {
+        return Qt::darkBlue;
+    }
+    else if(color == "blue")
+    {
+        return Qt::blue;
+    }
+    else if(color == "darkCyan")
+    {
+        return Qt::darkCyan;
+    }
+    else if(color == "cyan")
+    {
+        return Qt::cyan;
+    }
+}
+

@@ -90,7 +90,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //add dark color buttons
     colorLayoutDark->addWidget(colorBlack);
-    colorLayoutDark->addWidget(colorDarkGrey);
+    colorLayoutDark->addWidget(colorDarkGray);
     colorLayoutDark->addWidget(colorDarkRed);
     colorLayoutDark->addWidget(colorDarkMagenta);
     colorLayoutDark->addWidget(colorDarkYellow);
@@ -100,7 +100,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //add light color buttons
     colorLayoutLight->addWidget(colorWhite);
-    colorLayoutLight->addWidget(colorGrey);
+    colorLayoutLight->addWidget(colorGray);
     colorLayoutLight->addWidget(colorRed);
     colorLayoutLight->addWidget(colorMagenta);
     colorLayoutLight->addWidget(colorYellow);
@@ -249,6 +249,7 @@ void MainWindow::saveFile(QFileInfo checkSuffix)
         QPixmap pixMap = graphics->grab();
         pixMap.save(filePath);
         save = true;
+        scene->saved();
     }
     else
     {
@@ -259,6 +260,7 @@ void MainWindow::saveFile(QFileInfo checkSuffix)
 
 void MainWindow::saveImage()
 {
+    save = scene->isSaved();
     if(!save)
     {
         if(!filePath.isEmpty())
@@ -297,6 +299,7 @@ void MainWindow::saveAsImage()
 
 void MainWindow::closeEvent (QCloseEvent *event)
 {
+    save = scene->isSaved();
     if(!save){
         QMessageBox::StandardButton result = QMessageBox::question( this, "MyPaint",
                                                                         tr("You don't save your work.\nDo you want to save your work?\n"),
@@ -345,6 +348,7 @@ void MainWindow::newLayout()
     graphics->setAlignment(Qt::AlignCenter);
     graphics->setMouseTracking(true);
     this->setCentralWidget(graphics);
+    scene->saved();
     save = true;
 }
 
@@ -389,10 +393,14 @@ void MainWindow::clicked(const QString &color)
     if(color1Checked)
     {
         color1->setStyleSheet(QString("background-color:%1").arg(color));
+        scene->setBorderColor(color);
+        scene->setFillColor(color2->styleSheet().replace("background-color:", ""));
     }
     else if(color2Checked)
     {
         color2->setStyleSheet(QString("background-color:%1").arg(color));
+        scene->setBorderColor(color);
+        scene->setFillColor(color1->styleSheet().replace("background-color:", ""));
     }
 }
 
@@ -428,6 +436,18 @@ void MainWindow::actionDrawingClicked(int mode)
         actionRect->setChecked(false);
         actionSelect->setChecked(true);
     }
+}
+
+void MainWindow::setValueSlider(int value)
+{
+    sliderSize->setValue(value);
+    scene->setSizeOfBorderLine(value);
+}
+
+void MainWindow::setValueSpinBox(int value)
+{
+    spinBoxSize->setValue(value);
+    scene->setSizeOfBorderLine(value);
 }
 
 void MainWindow::createActions()
@@ -514,6 +534,8 @@ void MainWindow::createActions()
     {
         color2->setChecked(color2Checked);
     }
+    scene->setBorderColor(color1->styleSheet().replace("background-color:", ""));
+    scene->setFillColor(color2->styleSheet().replace("background-color:", ""));
     color1Text = new QLabel("Color 1");
     color2Text = new QLabel("Color 2");
 
@@ -526,13 +548,13 @@ void MainWindow::createActions()
     colorWhite->setStyleSheet("background-color:white");
     colorWhite->setFixedSize(24, 24);
 
-    colorDarkGrey = new QToolButton();
-    colorDarkGrey->setStyleSheet("background-color:darkGrey");
-    colorDarkGrey->setFixedSize(24, 24);
+    colorDarkGray = new QToolButton();
+    colorDarkGray->setStyleSheet("background-color:darkGray");
+    colorDarkGray->setFixedSize(24, 24);
 
-    colorGrey = new QToolButton();
-    colorGrey->setStyleSheet("background-color:grey");
-    colorGrey->setFixedSize(24, 24);
+    colorGray = new QToolButton();
+    colorGray->setStyleSheet("background-color:gray");
+    colorGray->setFixedSize(24, 24);
 
     colorDarkRed = new QToolButton();
     colorDarkRed->setStyleSheet("background-color:darkRed");
@@ -592,8 +614,8 @@ void MainWindow::createActions()
 void MainWindow::createConnections()
 {
     //connect spinBox and slider
-    connect(spinBoxSize, SIGNAL(valueChanged(int)), sliderSize, SLOT(setValue(int)));
-    connect(sliderSize, SIGNAL(valueChanged(int)), spinBoxSize, SLOT(setValue(int)));
+    connect(spinBoxSize, SIGNAL(valueChanged(int)), this, SLOT(setValueSlider(int)));
+    connect(sliderSize, SIGNAL(valueChanged(int)), this, SLOT(setValueSpinBox(int)));
 
     //connect change color1 and color2
     connect(color1, SIGNAL(clicked(bool)), this, SLOT(clickColor1()));
@@ -602,8 +624,8 @@ void MainWindow::createConnections()
     //connect button with colorMapper
     connect(colorBlack, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
     connect(colorWhite, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
-    connect(colorDarkGrey, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
-    connect(colorGrey, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorDarkGray, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
+    connect(colorGray, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
     connect(colorDarkRed, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
     connect(colorRed, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
     connect(colorDarkMagenta, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
@@ -620,8 +642,8 @@ void MainWindow::createConnections()
     //connect color of button and their color in mapper
     colorMapper->setMapping(colorBlack, QString("black"));
     colorMapper->setMapping(colorWhite, QString("white"));
-    colorMapper->setMapping(colorDarkGrey, QString("darkGrey"));
-    colorMapper->setMapping(colorGrey, QString("grey"));
+    colorMapper->setMapping(colorDarkGray, QString("darkGray"));
+    colorMapper->setMapping(colorGray, QString("gray"));
     colorMapper->setMapping(colorDarkRed, QString("darkRed"));
     colorMapper->setMapping(colorRed, QString("red"));
     colorMapper->setMapping(colorDarkMagenta, QString("darkMagenta"));
