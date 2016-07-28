@@ -64,9 +64,14 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
             itemRect->setPen(QPen(color(0), sizeOfBorderLine, Qt::SolidLine));
             itemRect->setPos(origPoint);
         }
+        if(_fill)
+        {
+            itemRect->setBrush(color(1));
+        }
         itemRect->setRect(0,0,
                           event->scenePos().x() - origPoint.x(),
                           event->scenePos().y() - origPoint.y());
+        save = false;
     }
     //---
     else
@@ -189,3 +194,7 @@ Qt::GlobalColor Scene::color(int which) const
     }
 }
 
+void Scene::setFill(bool fillIn)
+{
+    _fill = fillIn;
+}

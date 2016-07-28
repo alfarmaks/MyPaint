@@ -54,6 +54,7 @@ private:
     QLabel *color2Text;
     bool color1Checked = true;
     bool color2Checked = false;
+    bool fillButton = false;
     QToolButton *actionStrokeFill;
 
     QToolButton *colorBlack;
@@ -101,6 +102,7 @@ private slots:
     void actionDrawingClicked(int mode);
     void setValueSpinBox(int value);
     void setValueSlider(int value);
+    void BorderOrFill();
 };
 
 #endif // MAINWINDOW_H

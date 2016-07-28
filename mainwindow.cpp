@@ -450,6 +450,21 @@ void MainWindow::setValueSpinBox(int value)
     scene->setSizeOfBorderLine(value);
 }
 
+void MainWindow::BorderOrFill()
+{
+    if(!fillButton)
+    {
+        fillButton = true;
+
+    }
+    else
+    {
+        fillButton = false;
+    }
+    actionStrokeFill->setChecked(fillButton);
+    scene->setFill(fillButton);
+}
+
 void MainWindow::createActions()
 {
     //Set actions icons and names Tools
@@ -517,6 +532,7 @@ void MainWindow::createActions()
     actionStrokeFill->setIconSize(QSize(48, 48));
     actionStrokeFill->setIcon(QIcon(":/ToImages/Images/Stroke_Fill.png"));
     actionStrokeFill->setCheckable(true);
+    actionStrokeFill->setChecked(fillButton);
 
     color1 = new QToolButton();
     color2 = new QToolButton();
@@ -680,6 +696,8 @@ void MainWindow::createConnections()
     drawingMapper->setMapping(actionRect, int(Scene::DrawRect));
 
     connect(drawingMapper, SIGNAL(mapped(int)), this, SLOT(actionDrawingClicked(int)));
+
+    connect(actionStrokeFill, SIGNAL(clicked(bool)), this, SLOT(BorderOrFill()));
 }
 
 //zoom

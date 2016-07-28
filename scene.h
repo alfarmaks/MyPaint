@@ -19,6 +19,7 @@ public:
     void setSizeOfBorderLine(int size);
     bool isSaved() const;
     void saved();
+    void setFill(bool fillIn);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -38,7 +39,7 @@ private:
     qreal sizeOfBorderLine = 1;
 
     bool save = true;
-
+    bool _fill = false;
     Qt::GlobalColor color(int which = 0) const;
     void makeItemsControllable(bool areControllable);
 };
