@@ -12,6 +12,7 @@
 #include <QSpinBox>
 #include <QSlider>
 #include <QSignalMapper>
+#include <QWheelEvent>
 
 namespace Ui {
 class MainWindow;
@@ -86,6 +87,7 @@ private:
     void saveFile(QFileInfo checkSuffix);
     void ErrorFileFormat(QString suffix);
     bool checkFileFormat(QFileInfo checkSuffix);
+    void wheelEvent(QWheelEvent *event);
 
 private slots:
     void openFile();
@@ -96,7 +98,6 @@ private slots:
     void clickColor1();
     void clickColor2();
     void clicked(const QString &color);
-
     void actionDrawingClicked(int mode);
 
 };

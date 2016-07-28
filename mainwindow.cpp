@@ -660,3 +660,33 @@ void MainWindow::createConnections()
     connect(drawingMapper, SIGNAL(mapped(int)), this, SLOT(actionDrawingClicked(int)));
 }
 
+//zoom
+void MainWindow::wheelEvent(QWheelEvent *event)
+{
+    const double zoomInFactor = 1.15;
+    const double zoomOutFactor = 1 / zoomInFactor;
+    double zoomFactor;
+    //Set Anchors
+    graphics->setTransformationAnchor(QGraphicsView::NoAnchor);
+    graphics->setResizeAnchor(QGraphicsView::NoAnchor);
+
+    //Save the scene pos
+    QPointF oldPos = graphics->mapToScene(event->pos());
+
+    //Zoom
+    if (event->delta() > 0)
+    {
+        zoomFactor = zoomInFactor;
+    }
+    else
+    {
+        zoomFactor = zoomOutFactor;
+    }
+    graphics->scale(zoomFactor, zoomFactor);
+    //Get the new position
+    QPointF newPos = graphics->mapToScene(event->pos());
+
+    //Move scene to old position
+    QPointF delta = newPos - oldPos;
+    graphics->translate(delta.x(), delta.y());
+}
